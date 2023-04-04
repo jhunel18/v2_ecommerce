@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Ecommerce App</string>
+    <string name="username_string">Username</string>
+    <string name="password_string">Password</string>
+    <string name="register_string">Register</string>
+    <string name="confirm_password_string">Confirm Password</string>
+
+    <string-array name="usertype">
+        <item>Administrator</item>
+        <item>Customer</item>
+        <item>Super User</item>
+    </string-array>
+
+</resources>
