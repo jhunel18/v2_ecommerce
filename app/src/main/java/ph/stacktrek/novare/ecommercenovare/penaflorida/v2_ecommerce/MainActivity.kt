@@ -82,6 +82,7 @@ class MainActivity : AppCompatActivity() {
                     "Added the Product successfully",
                     Toast.LENGTH_SHORT
                 ).show()
+                loadProducts()
             }
         }
     }
