@@ -15,9 +15,6 @@ interface ProductDAO {
     @Query("SELECT * FROM products ORDER BY price ASC")
     fun getAllProducts(): List<ProductEntity>
 
-//    @Query("SELECT * FROM tbl_Lessons ORDER BY lessonNumber ASC")
-//    fun getAllLessons(): LiveData<List<LessonEntity>>
-
-//    @Query("DELETE FROM products")
-//    fun deleteProduct():LiveData<List<ProductEntity>>
+    @Query("DELETE FROM products")
+    fun deleteAllProducts()
 }

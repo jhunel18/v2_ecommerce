@@ -1,11 +1,11 @@
 package ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce
 
 import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import kotlinx.coroutines.CoroutineScope
@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce.adapter.ProductAdapter
+import ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce.adapter.SwipeCallback
 import ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce.database.AppDatabase
 import ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce.databinding.ActivityMainBinding
 import ph.stacktrek.novare.ecommercenovare.penaflorida.v2_ecommerce.databinding.DialogueAddProductBinding
@@ -22,6 +23,8 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding:ActivityMainBinding
     private lateinit var db:AppDatabase
+    private lateinit var productAdapter:ProductAdapter
+    private lateinit var itemTouchHelper:ItemTouchHelper
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,19 +33,24 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         db = Room.databaseBuilder(applicationContext, AppDatabase::class.java, "my_db").build()
 
+        loadProducts()
+
         binding.fabAddProductButton.setOnClickListener{
             showAddProductDialog()
         }
-        loadProducts()
     }
-
-    fun loadProducts() {
+    private fun loadProducts() {
         CoroutineScope(Dispatchers.IO).launch {
             val productList = db.productDao().getAllProducts()
+            productAdapter = ProductAdapter(applicationContext, productList as ArrayList<ProductEntity>)
             withContext(Dispatchers.Main) {
-                val adapter = ProductAdapter(productList)
-                binding.productsListRecycler.adapter = adapter
+                binding.productsListRecycler.adapter = productAdapter
                 binding.productsListRecycler.layoutManager = LinearLayoutManager(this@MainActivity)
+            }
+            val swipeCallback = SwipeCallback(applicationContext,productAdapter,0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT)
+            swipeCallback.productAdapter = productAdapter
+            itemTouchHelper = ItemTouchHelper(swipeCallback).apply {
+                attachToRecyclerView(binding.productsListRecycler)
             }
         }
     }
